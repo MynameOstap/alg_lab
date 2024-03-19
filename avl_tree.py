@@ -1,44 +1,45 @@
-class TreeNode: 
+class Node: 
     def __init__(self, val): 
         self.value = val 
         self.left = None
         self.right = None
         self.height = 1
   
- 
+  
 class AVL_Tree: 
-  
+    def __init__(self) -> None:
+        self.root: Node = None
     
-    def add(self, root, value): 
-      
-         
-        if not root: 
-            return TreeNode(value) 
-        elif value < root.value: 
-            root.left = self.add(root.left, value) 
-        else: 
-            root.right = self.add(root.right, value) 
-        root.height = 1 + max(self.getHeight(root.left), self.getHeight(root.right)) 
-        balance = self.getBalance(root) 
-  
-        if balance > 1 and value < root.left.value: 
-            return self.rightRotate(root) 
-  
-         
-        if balance < -1 and value > root.right.value: 
-            return self.leftRotate(root) 
-  
-        
-        if balance > 1 and value > root.left.value: 
-            root.left = self.leftRotate(root.left) 
-            return self.rightRotate(root) 
-  
-        
-        if balance < -1 and value < root.right.value: 
-            root.right = self.rightRotate(root.right) 
-            return self.leftRotate(root) 
-  
-        return root 
+    def add(self, value): 
+        def wrapper(parent):
+            if not parent: 
+                return Node(value) 
+            elif value < parent.value: 
+                parent.left = wrapper(parent.left) 
+            else: 
+                parent.right = wrapper(parent.right) 
+            parent.height = 1 + max(self.getHeight(parent.left), self.getHeight(parent.right)) 
+            balance = self.getBalance(parent) 
+    
+            if balance > 1 and value < parent.left.value: 
+                return self.rightRotate(parent) 
+    
+            
+            if balance < -1 and value > parent.right.value: 
+                return self.leftRotate(parent) 
+    
+            
+            if balance > 1 and value > parent.left.value: 
+                parent.left = self.leftRotate(parent.left) 
+                return self.rightRotate(parent) 
+    
+            
+            if balance < -1 and value < parent.right.value: 
+                parent.right = self.rightRotate(parent.right) 
+                return self.leftRotate(parent) 
+    
+            return parent
+        self.root = wrapper(self.root)
   
     def leftRotate(self, dis_node): 
         new_node = dis_node.right 
@@ -69,22 +70,24 @@ class AVL_Tree:
   
         return self.getHeight(root.left) - self.getHeight(root.right) 
   
-    def out(self, root): 
-        if not root: 
-            return
-        self.out(root.left)
-        print("{0} ".format(root.value), end="")  
-        self.out(root.right)
-         
+    def out(self):
+        def wrapper(parent):
+            if not parent: 
+                return
+            wrapper(parent.left)
+            print("{0} ".format(parent.value), end="")  
+            wrapper(parent.right)
+        wrapper(self.root)
+            
   
   
 myTree = AVL_Tree() 
-root = None
+parent = None
   
-root = myTree.add(root, 10) 
-root = myTree.add(root, 20) 
-root = myTree.add(root, 30) 
-root = myTree.add(root, 40) 
-root = myTree.add(root, 50) 
-root = myTree.add(root, 25)
-myTree.out(root) 
+parent = myTree.add(10) 
+parent = myTree.add(20) 
+parent = myTree.add(30) 
+parent = myTree.add(40) 
+parent = myTree.add(50) 
+parent = myTree.add(25)
+myTree.out() 
