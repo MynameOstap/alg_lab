@@ -1,74 +1,90 @@
-class Node:
-    def __init__(self,value):
-        self.right:Node = None
-        self.left:Node = None
-        self.value = value
-        self.height:int = 1
-
-class BinaryTree:
-    def __init__(self):
-        self.root = None
+class TreeNode: 
+    def __init__(self, val): 
+        self.value = val 
+        self.left = None
+        self.right = None
+        self.height = 1
+  
+ 
+class AVL_Tree: 
+  
     
-    def add(self,value):
-        node = Node(value)
-        parent = self.__find(value, self.root)
+    def add(self, root, value): 
+      
+         
+        if not root: 
+            return TreeNode(value) 
+        elif value < root.value: 
+            root.left = self.add(root.left, value) 
+        else: 
+            root.right = self.add(root.right, value) 
+        root.height = 1 + max(self.getHeight(root.left), self.getHeight(root.right)) 
+        balance = self.getBalance(root) 
+  
+        if balance > 1 and value < root.left.value: 
+            return self.rightRotate(root) 
+  
+         
+        if balance < -1 and value > root.right.value: 
+            return self.leftRotate(root) 
+  
         
-        if parent is None:
-            self.root = node
+        if balance > 1 and value > root.left.value: 
+            root.left = self.leftRotate(root.left) 
+            return self.rightRotate(root) 
+  
+        
+        if balance < -1 and value < root.right.value: 
+            root.right = self.rightRotate(root.right) 
+            return self.leftRotate(root) 
+  
+        return root 
+  
+    def leftRotate(self, dis_node): 
+        new_node = dis_node.right 
+        dis_node.right = dis_node.right.left
+        new_node.left = dis_node
+        dis_node.height = 1 + max(self.getHeight(dis_node.left), self.getHeight(dis_node.right)) 
+        new_node.height = 1 + max(self.getHeight(new_node.left), self.getHeight(new_node.right)) 
+        return new_node 
+  
+    def rightRotate(self, dis_node): 
+        new_node = dis_node.left 
+        dis_node.left = dis_node.left.right
+        new_node.right = dis_node
+        dis_node.height = 1 + max(self.getHeight(dis_node.left), self.getHeight(dis_node.right)) 
+        new_node.height = 1 + max(self.getHeight(new_node.left), self.getHeight(new_node.right)) 
+  
+        return new_node 
+  
+    def getHeight(self, root): 
+        if not root: 
+            return 0
+  
+        return root.height 
+  
+    def getBalance(self, root): 
+        if not root: 
+            return 0
+  
+        return self.getHeight(root.left) - self.getHeight(root.right) 
+  
+    def out(self, root): 
+        if not root: 
             return
-        if parent.value == value:
-            raise Exception
-        if parent.value > value:
-            parent.left = node
-        else:
-            parent.right = node
-        parent.height = max(parent.height - 1, 1) + 1
-            
-        
-    def __find(self,value,parent) -> Node:
-        if parent is None:
-            return None
-        child = parent.left if parent.value > value else parent.right
-        if child is None:
-            return parent
-        return self.__find(value, child)
-        
-    def find(self,value):
-        node = self.__find(value,self.root)
-        if node is None:
-            return None
-        if node.value == value:
-            return value
-        return None
-    def detour(self):
-        out = ' '
-        def inner(parent):
-            nonlocal out
-            if parent is None:
-                return
-            inner(parent.left)
-            out += str(parent.value) + ' ' 
-            inner(parent.right) 
-        inner(self.root)
-        return out
-        
-        
-import random
-t = BinaryTree()
-
-for _ in range(50):
-    try:
-        t.add(random.randint(0, 255))
-    except:
-        ...
-print(t.detour())        
-print(t.find(144))
-        
-        
-        
-    
-
-        
-        
-        
-        
+        self.out(root.left)
+        print("{0} ".format(root.value), end="")  
+        self.out(root.right)
+         
+  
+  
+myTree = AVL_Tree() 
+root = None
+  
+root = myTree.add(root, 10) 
+root = myTree.add(root, 20) 
+root = myTree.add(root, 30) 
+root = myTree.add(root, 40) 
+root = myTree.add(root, 50) 
+root = myTree.add(root, 25)
+myTree.out(root) 
